@@ -6,7 +6,7 @@
 /*   By: csil <csil@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/16 09:59:19 by csil              #+#    #+#             */
-/*   Updated: 2023/10/16 19:27:43 by cduffaut         ###   ########.fr       */
+/*   Updated: 2023/10/16 22:01:07 by csil             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,6 @@ int		check_n(char *str);
 char	*ft_strjoin(char *stock, char *tmp);
 int		ft_strlen(char *str);
 char	*ft_strndup(char *stock, int i);
-void	*ft_calloc(size_t nb_elem, size_t size_elem);
+char	*ft_calloc(size_t count, size_t size);
 
 #endif

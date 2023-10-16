@@ -6,7 +6,7 @@
 /*   By: cduffaut <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/16 19:34:33 by cduffaut          #+#    #+#             */
-/*   Updated: 2023/10/16 19:34:38 by cduffaut         ###   ########.fr       */
+/*   Updated: 2023/10/16 23:40:23 by csil             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,14 +29,15 @@ char	*get_next_line(int fd)
 	return (line);
 }
 
+// Create the stocker for the reads until \n
 char	*create_stock(char *stock, int fd)
 {
 	int		count;
 	char	*tmp;
 
 	if (!stock)
-		stock = (char *)ft_calloc(1, sizeof(char));
-	tmp = (char *)ft_calloc(BUFFER_SIZE + 1, sizeof(char));
+		stock = ft_calloc(1, sizeof(char));
+	tmp = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
 	if (!tmp || !stock)
 		return (NULL);
 	count = 1;
@@ -58,12 +59,13 @@ char	*create_stock(char *stock, int fd)
 	return (stock);
 }
 
+// Create the line to return
 char	*create_line(char *stock)
 {
 	int		i;
 	char	*str;
 
-	if (!stock[0])
+	if (stock[0] == '\0')
 		return (NULL);
 	i = check_n(stock);
 	if (i == -1)
@@ -74,6 +76,7 @@ char	*create_line(char *stock)
 	return (str);
 }
 
+// Clean the stock with the chars only after \n or free
 char	*clean_stock(char *stock)
 {
 	int		i;
@@ -81,11 +84,11 @@ char	*clean_stock(char *stock)
 	char	*clean;
 
 	if (!stock)
-		return (free_all(stock));
+		return (NULL);
 	i = check_n(stock);
 	if (i == -1)
 		return (free_all(stock));
-	clean = (char *)ft_calloc(ft_strlen(stock) - i + 1, sizeof(char));
+	clean = ft_calloc(ft_strlen(stock + i) + 1, sizeof(char));
 	if (!clean)
 		return (free_all(stock));
 	j = 0;
