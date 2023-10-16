@@ -1,37 +1,38 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line_utils.c                              :+:      :+:    :+:   */
+/*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: csil <csil@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: cduffaut <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/16 09:58:51 by csil              #+#    #+#             */
-/*   Updated: 2023/10/16 12:53:07 by csil             ###   ########.fr       */
+/*   Created: 2023/10/16 14:56:29 by cduffaut          #+#    #+#             */
+/*   Updated: 2023/10/16 19:33:52 by cduffaut         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-// Malloc a ptr and fill it with \0
-void	*ft_calloc(size_t count, size_t size)
+void	*ft_calloc(size_t nb_elem, size_t size_elem)
 {
-	size_t	i;
-	void	*str;
+	void			*ptr;
+	size_t			i;
+	unsigned char	c;
 
-	str = malloc(size * count);
-	if (!str)
+	ptr = malloc(nb_elem * size_elem);
+	if (!ptr)
 		return (NULL);
 	i = 0;
-	while (i < count)
+	c = '\0';
+	while (i < (nb_elem * size_elem))
 	{
-		((char *)str)[i] = 0;
+		((char *)ptr)[i] = c;
 		i++;
 	}
-	return (str);
+	return (ptr);
 }
 
-// Chec if there is an \n (return index) or not (return -1)
-int	found_n(char *str)
+// Check if there is \n, return index if yes, -1 if no
+int	check_n(char *str)
 {
 	int	i;
 
@@ -45,30 +46,30 @@ int	found_n(char *str)
 	return (-1);
 }
 
-// Malloc and concatenate str one and two and return it
-char	*ft_strjoin(char *one, char *two)
+char	*ft_strjoin(char *stock, char *tmp)
 {
-	char	*str;
-	int		i;
 	int		j;
+	int		i;
+	int		len;
+	char	*str;
 
-	str = malloc(sizeof(char) * (ft_strlen(one) + ft_strlen(two) + 1));
+	len = ft_strlen(stock) + ft_strlen(tmp) + 1;
+	str = (char *)ft_calloc(len, sizeof(char));
 	if (!str)
-	{
-		free(one);
+		free(stock);
+	if (!str)
 		return (NULL);
-	}
 	i = 0;
-	while (one[i])
+	while (stock[i])
 	{
-		str[i] = one[i];
+		str[i] = stock[i];
 		i++;
 	}
 	j = 0;
-	while (two[j])
-		str[i++] = two[j++];
+	while (tmp[j])
+		str[i++] = tmp[j++];
+	free(stock);
 	str[i] = '\0';
-	free(one);
 	return (str);
 }
 
@@ -85,21 +86,20 @@ int	ft_strlen(char *str)
 	return (i);
 }
 
-// Duplicate stock until index and return it
 char	*ft_strndup(char *stock, int i)
 {
 	int		j;
-	char	*str;
+	char	*line;
 
-	str = malloc(sizeof(char) * (i + 2));
-	if (!str)
-		return (NULL);
 	j = 0;
+	line = (char *)ft_calloc(i + 2, sizeof(char));
+	if (!line)
+		return (NULL);
 	while (j <= i && stock[j])
 	{
-		str[j] = stock[j];
+		line[j] = stock[j];
 		j++;
 	}
-	str[j] = '\0';
-	return (str);
+	line[j] = '\0';
+	return (line);
 }

@@ -3,25 +3,25 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: csil <csil@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: cduffaut <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/16 09:58:04 by csil              #+#    #+#             */
-/*   Updated: 2023/10/16 13:01:08 by csil             ###   ########.fr       */
+/*   Created: 2023/10/16 19:34:33 by cduffaut          #+#    #+#             */
+/*   Updated: 2023/10/16 19:34:38 by cduffaut         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 #include <stdio.h>
 
-// Main function 
+// Main function
 char	*get_next_line(int fd)
 {
-	static char	*stock = NULL;
+	static char	*stock;
 	char		*line;
 
-	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
+	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	stock = recup(stock, fd);
+	stock = create_stock(stock, fd);
 	if (!stock)
 		return (NULL);
 	line = create_line(stock);
@@ -29,37 +29,35 @@ char	*get_next_line(int fd)
 	return (line);
 }
 
-// Create the stock line
-char	*recup(char *stock, int fd)
+char	*create_stock(char *stock, int fd)
 {
-	char	*str;
 	int		count;
+	char	*tmp;
 
 	if (!stock)
 		stock = (char *)ft_calloc(1, sizeof(char));
-	str = malloc(sizeof(char) * (BUFFER_SIZE + 1));
-	if (!str || !stock)
+	tmp = (char *)ft_calloc(BUFFER_SIZE + 1, sizeof(char));
+	if (!tmp || !stock)
 		return (NULL);
 	count = 1;
 	while (count > 0)
 	{
-		count = read(fd, str, BUFFER_SIZE);
+		count = read(fd, tmp, BUFFER_SIZE);
 		if (count == -1)
 		{
-			free(str);
+			free(tmp);
 			free(stock);
 			return (NULL);
 		}
-		str[count] = '\0';
-		stock = ft_strjoin(stock, str);
-		if (found_n(str) != -1)
+		tmp[count] = '\0';
+		stock = ft_strjoin(stock, tmp);
+		if (check_n(tmp) != -1)
 			break ;
 	}
-	free(str);
+	free(tmp);
 	return (stock);
 }
 
-// Create the line to return
 char	*create_line(char *stock)
 {
 	int		i;
@@ -67,7 +65,7 @@ char	*create_line(char *stock)
 
 	if (!stock[0])
 		return (NULL);
-	i = found_n(stock);
+	i = check_n(stock);
 	if (i == -1)
 		i = ft_strlen(stock);
 	str = ft_strndup(stock, i);
@@ -76,52 +74,48 @@ char	*create_line(char *stock)
 	return (str);
 }
 
-// Clean the stock
 char	*clean_stock(char *stock)
 {
 	int		i;
 	int		j;
-	char	*str;
+	char	*clean;
 
 	if (!stock)
 		return (free_all(stock));
-	i = found_n(stock);
+	i = check_n(stock);
 	if (i == -1)
 		return (free_all(stock));
-	str = malloc(sizeof(char) * (ft_strlen(stock + i) + 1));
-	if (!str)
+	clean = (char *)ft_calloc(ft_strlen(stock) - i + 1, sizeof(char));
+	if (!clean)
 		return (free_all(stock));
-	i++;
 	j = 0;
-	while (stock[i])
+	while (stock[++i])
 	{
-		str[j++] = stock[i++];
+		clean[j++] = stock[i];
 	}
-	str[j] = '\0';
+	clean[j] = '\0';
 	free(stock);
-	return (str);
+	return (clean);
 }
 
-// Free the stock
-char	*free_all(char *stock)
+char	*free_all(char *str)
 {
-	free(stock);
+	free(str);
 	return (NULL);
 }
 
-// Make it work
 /*int	main(void)
 {
-	int		fd = 0;
-	char	*str = NULL;
+	char	*str;
+	int		fd;
 
 	fd = open("test.txt", 'r');
-	if (!fd)
+	if (fd < 0)
 		return (0);
 	while (1)
 	{
 		str = get_next_line(fd);
-		printf ("%s", str);
+		printf("%s", str);
 		if (!str)
 		{
 			free(str);
