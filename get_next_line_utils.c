@@ -13,7 +13,7 @@
 #include "get_next_line.h"
 
 /*
-	Mix of calloc and bzero
+	Mix of malloc and bzero
 	Malloc (type * nbr_of_elements)
 	Fill the str with 0
 */
